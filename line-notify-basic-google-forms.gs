@@ -30,3 +30,4 @@ function LineNotify() {
 
   send(message,token);
 }
+     
