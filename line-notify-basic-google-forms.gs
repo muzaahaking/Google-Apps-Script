@@ -1,62 +1,32 @@
-function onFormSubmit() {
+function LineNotify() {
+  var token = "OjBnrxJCU9cWukkVDuA6ZWszH6V2VybU0mFYB6ucDCv";
+  
+  var message = {};
 
-var form = FormApp.openById('xxx'); 
-var fRes = form.getResponses();
-var formResponse = fRes[fRes.length - 1];
-var itemResponses = formResponse.getItemResponses();
+  message.message = "hello world";
 
-var msg = 'ใส่ข้อความแจ้งเตือน';//+
-// ' \n' + itemResponses[0].getItem().getTitle() + ': ' + itemResponses[0].getResponse() +
-// ' \n' + itemResponses[0].getItem().getTitle() + ': ' + itemResponses[0].getResponse() +
-// ' \n' + itemResponses[0].getItem().getTitle() + ': ' + itemResponses[0].getResponse() +
-// ' \n' + itemResponses[0].getItem().getTitle() + ': ' + itemResponses[0].getResponse()
+  const send = function (message, token) {
+    var payload = {
+      "method": "post",
+      "payload": message,
+      "headers": {"Authorization": "Bearer " + token }
+    }
+    UrlFetchApp.fetch("https://notify-api.line.me/api/notify", payload)
+  }
+  
+  var form = FormApp.openById("1fjtk99kHyrUFbU1f_m_W10QmpDUaBrJ1q9xHOj_O3bw"); //รหัสอ้างอิงเอกสารที่ต้องการเข้าถึง
+  
+  var responses = form.getResponses(); //ข้อมูลการตอบกลับทั้งหมด
+  
+  var response = responses[responses.length - 1]; //responses.length - 1 คือ จำนวนการตอบกลับล่าสุดในเอกสาร
+  
+  var items = response.getItemResponses();
+  
+  message.message = "ลำดับที่: " + responses.length;
+  
+  for (var i = 0; i < items.length; i++) {
+    message.message += "\n" + items[i].getItem().getTitle() + ": " + items[i].getResponse();
+  }
 
-for (var i = 0; i < itemResponses.length; i++) {
-msg += ' \n' + itemResponses[i].getItem().getTitle() + ': ' + itemResponses[i].getResponse();
-}
-sendLineNotify(msg);
-}
-
-function sendLineNotify(message) {
-var token = ["xxx"]; // ***ใส่ token ของกลุ่ม Line ที่ใช้งาน***
-var options = {
-"method": "post",
-"payload": "message=" + message,
-"headers": {
-"Authorization": "Bearer " + token
-}
-};
-
-UrlFetchApp.fetch("https://notify-api.line.me/api/notify", options);
-}
-
-
-
-
-function onFormSubmit() {
-
-var form = FormApp.openById("ใส่ form id"); 
-var fRes = form.getResponses();
-
-var formResponse = fRes[fRes.length - 1];
-var itemResponses = formResponse.getItemResponses();
-
-var msg = itemResponses[0].getResponse() + ' : ส่งงานเรียบร้อยแล้ว';
-
-sendLineNotify(msg);
-// Logger.log(msg)
-}
-
-function sendLineNotify(message) {
-
-var token = ["ใส่ token ของกลุ่ม Line ที่ใช้งาน"];
-var options = {
-"method": "post",
-"payload": "message=" + message,
-"headers": {
-"Authorization": "Bearer " + token
-}
-};
-
-UrlFetchApp.fetch("https://notify-api.line.me/api/notify", options);
+  send(message,token);
 }
